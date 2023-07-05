@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Auth;
 
 class SuggestionsController extends Controller
 {
-    public function index(RequestRequest $form_request)
+    public function index(RequestRequest $formFequest)
     {
         $currentUserId = Auth::id();
         $query = User::whereNotIn('id', function ($q) use ($currentUserId) {
@@ -22,7 +22,7 @@ class SuggestionsController extends Controller
         })->where('id', '!=', $currentUserId);
 
         $count = $query->count();
-        $suggestions = $query->offset($form_request->skipCounter)->limit($form_request->takeAmount)->get();
+        $suggestions = $query->offset($formFequest->skipCounter)->limit($formFequest->takeAmount)->get();
 
         $html = '';
         foreach ($suggestions as $suggestion)
@@ -31,11 +31,11 @@ class SuggestionsController extends Controller
         return response()->json(['content' => $html,'count'=>$count], 200);
     }
 
-    public function destroy(RequestRequest $form_request)
+    public function destroy(RequestRequest $formFequest)
     {
 
-        $q = \App\Models\Request::where('user_id', $form_request->userId)
-            ->where('request_id', $form_request->requestId)
+        $q = \App\Models\Request::where('user_id', $formFequest->userId)
+            ->where('request_id', $formFequest->requestId)
             ->delete();
 
         return response()->json(['status' => $q], 200);

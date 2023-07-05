@@ -7,17 +7,17 @@ use Illuminate\Support\Facades\Auth;
 
 class RequestsController extends Controller
 {
-    public function index(RequestRequest $form_request)
+    public function index(RequestRequest $formFequest)
     {
 
-        $mode = $form_request->mode;
+        $mode = $formFequest->mode;
         $query = Auth::user();
         if ($mode == 'sent')
             $query = $query->pendingRequestsTo();
         else
             $query = $query->pendingRequestsFrom();
         $count = $query->count();
-        $requests = $query->offset($form_request->skipCounter)->limit($form_request->takeAmount)->get();
+        $requests = $query->offset($formFequest->skipCounter)->limit($formFequest->takeAmount)->get();
 
         $html = '';
         foreach ($requests as $request)
@@ -26,13 +26,13 @@ class RequestsController extends Controller
         return response()->json(['content' => $html, 'count' => $count], 200);
     }
 
-    public function store(RequestRequest $form_request)
+    public function store(RequestRequest $formFequest)
     {
 
         \App\Models\Request::create(
             [
-                'user_id' => $form_request->userId,
-                'request_id' => $form_request->suggestionId,
+                'user_id' => $formFequest->userId,
+                'request_id' => $formFequest->suggestionId,
                 'accepted' => 0
             ]
         );
@@ -40,29 +40,29 @@ class RequestsController extends Controller
         return response()->json(['status' => 'success'], 200);
     }
 
-    public function update(RequestRequest $form_request)
+    public function update(RequestRequest $formFequest)
     {
 
         \App\Models\Request::create(
             [
-                'user_id' => $form_request->userId,
-                'request_id' => $form_request->requestId,
+                'user_id' => $formFequest->userId,
+                'request_id' => $formFequest->requestId,
                 'accepted' => 1
             ]
         );
 
-        \App\Models\Request::where('user_id', $form_request->requestId)
-            ->where('request_id', $form_request->userId)
+        \App\Models\Request::where('user_id', $formFequest->requestId)
+            ->where('request_id', $formFequest->userId)
             ->update(['accepted'=>1]);
 
         return response()->json(['status' => 'success'], 200);
     }
 
-    public function destroy(RequestRequest $form_request)
+    public function destroy(RequestRequest $formFequest)
     {
 
-        $q = \App\Models\Request::where('user_id', $form_request->userId)
-            ->where('request_id', $form_request->requestId)
+        $q = \App\Models\Request::where('user_id', $formFequest->userId)
+            ->where('request_id', $formFequest->requestId)
             ->delete();
 
         return response()->json(['status' =>  'success'], 200);

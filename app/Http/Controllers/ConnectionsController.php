@@ -8,12 +8,12 @@ use Illuminate\Support\Facades\Auth;
 
 class ConnectionsController extends Controller
 {
-    public function index(RequestRequest $form_request)
+    public function index(RequestRequest $formFequest)
     {
 
         $query = Auth::user()->Connections();
         $count = $query->count();
-        $connections = $query->offset($form_request->skipCounter)->limit($form_request->takeAmount)->get();
+        $connections = $query->offset($formFequest->skipCounter)->limit($formFequest->takeAmount)->get();
 
         $html = '';
         foreach ($connections as $connection)
@@ -23,16 +23,16 @@ class ConnectionsController extends Controller
     }
 
 
-    public function destroy(RequestRequest $form_request)
+    public function destroy(RequestRequest $formFequest)
     {
 
-        $q = \App\Models\Request::where(function ($q) use ($form_request) {
-            $q->where('user_id', $form_request->userId)
-                ->where('request_id', $form_request->connectionId);
+        $q = \App\Models\Request::where(function ($q) use ($formFequest) {
+            $q->where('user_id', $formFequest->userId)
+                ->where('request_id', $formFequest->connectionId);
              })
-            ->orWhere(function ($q) use ($form_request) {
-                $q->where('user_id', $form_request->connectionId)
-                    ->where('request_id', $form_request->userId);
+            ->orWhere(function ($q) use ($formFequest) {
+                $q->where('user_id', $formFequest->connectionId)
+                    ->where('request_id', $formFequest->userId);
             })
             ->delete();
 
